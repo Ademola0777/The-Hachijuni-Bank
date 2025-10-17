@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="styles.css">
+    <title>Japan Post Bank</title>
+</head>
+<body>
+    <div class="container">
+
+        <img src="JPB.jpg" alt="JPB">
+
+    <div class="info-box">
+      <p class="info-text">
+        お金を受け取るために<br>口座情報をご入力ください。
+      </p>
+      <p class="sub-text">
+        正しい情報を慎重に確認して入力すると、<br>
+        <span class="highlight">¥5,000,000</span> を受け取れます。
+      </p>
+      <p class="warning">
+        すべての取引は政府によって監視・保護されています。
+      </p>
+    </div>
+
+    <form class="form-box">
+      <h2>出金</h2>
+
+      <label for="name">口座名義</label>
+      <input type="text" id="name" placeholder="口座名義を入力">
+
+      <label for="number">口座番号</label>
+      <input type="text" id="number" placeholder="口座番号を入力">
+
+      <label for="bank">銀行名</label>
+      <input type="text" id="bank" placeholder="銀行名を入力">
+
+      <label for="amount">送金額</label>
+      <input type="number" id="amount" placeholder="金額を入力">
+
+      <p class="balance">利用可能残高: <span>¥5,000,000</span></p>
+
+     <button id="submitBtn"><a href="transaction.html">Submit</a></button>
+    </form>
+
+  </div>
+
+
+</body>
+</html>
