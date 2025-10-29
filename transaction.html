@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>最終緊急支払い通知</title>
+    <title>Transaction</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
         * {
@@ -14,7 +14,7 @@
         }
         
         body {
-            background: linear-gradient(135deg, #fff5f5 0%, #ffe5e5 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #e4edf5 100%);
             color: #333;
             line-height: 1.6;
             display: flex;
@@ -29,78 +29,116 @@
             width: 100%;
         }
         
-        header {
-            text-align: center;
-            margin-bottom: 30px;
-            padding: 20px;
-            background: white;
-            border-radius: 12px;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            border: 2px solid #ff4444;
-        }
-        
-        h1 {
-            color: #d32f2f;
-            font-size: 28px;
-            margin-bottom: 10px;
+        /* Loader Container */
+        .loader-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.95);
             display: flex;
-            align-items: center;
             justify-content: center;
-            gap: 15px;
-        }
-        
-        .alert-badge {
-            display: inline-block;
-            background: #ff4444;
-            color: white;
-            padding: 8px 20px;
-            border-radius: 20px;
-            font-size: 16px;
-            margin-top: 10px;
-            font-weight: bold;
-            animation: pulse 2s infinite;
-        }
-        
-        @keyframes pulse {
-            0% { transform: scale(1); }
-            50% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        
-        .urgent-notice {
-            background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
-            border: 2px solid #f44336;
-            padding: 25px;
-            margin-bottom: 25px;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-        }
-        
-        .urgent-notice h2 {
-            color: #c62828;
-            margin-bottom: 15px;
-            display: flex;
             align-items: center;
-            gap: 12px;
-            font-size: 22px;
+            z-index: 1000;
+            transition: opacity 0.5s ease-out;
+            animation: fadeOut 0.5s forwards;
+            animation-delay: 5s;
+        }
+
+        .loader-content {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            text-align: center;
+            max-width: 400px;
+            width: 90%;
+            border: 3px solid #4caf50;
+        }
+
+        .loader-text {
+            font-weight: bold;
+            margin-bottom: 20px;
+            font-size: 18px;
+            color: #2c3e50;
+        }
+
+        .loader {
+            border: 8px solid #f3f3f3;
+            border-top: 8px solid #4caf50;
+            border-radius: 50%;
+            width: 80px;
+            height: 80px;
+            margin: 20px auto;
+            animation: spin 1.5s linear infinite;
+        }
+
+        .progress-container {
+            width: 100%;
+            background: #e0e0e0;
+            border-radius: 10px;
+            margin: 20px 0;
+            height: 12px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(90deg, #4caf50, #2e7d32);
+            border-radius: 10px;
+            width: 0%;
+            transition: width 0.3s ease;
+        }
+
+        .percentage {
+            font-size: 28px;
+            font-weight: bold;
+            color: #2e7d32;
+            margin: 15px 0;
+        }
+
+        .loading-steps {
+            text-align: center;
+            font-size: 14px;
+            color: #666;
+            margin-top: 15px;
+            min-height: 20px;
+            font-weight: 500;
         }
         
-        .warning-icon {
-            color: #f44336;
-            font-size: 26px;
+        .header {
+            background: linear-gradient(135deg, #2c3e50 0%, #34495e 100%);
+            color: white;
+            padding: 25px;
+            border-radius: 12px 12px 0 0;
+            text-align: center;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
         }
         
-        .transaction-info {
-            background-color: white;
-            border-radius: 12px;
+        .header h1 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+        
+        .content-box {
+            background: white;
+            border-radius: 0 0 12px 12px;
             box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
             padding: 30px;
-            margin-top: 10px;
             margin-bottom: 30px;
-            border: 2px solid #ff9800;
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            opacity: 0;
+            animation: slideIn 0.5s forwards;
+            animation-delay: 5.5s;
         }
         
-        .fee-breakdown {
+        .important-notice {
             background: linear-gradient(135deg, #fff3e0 0%, #ffe0b2 100%);
             border-left: 5px solid #ff9800;
             padding: 25px;
@@ -108,69 +146,71 @@
             border-radius: 10px;
         }
         
-        .fee-breakdown h3 {
+        .important-notice h2 {
             color: #e65100;
-            margin-bottom: 20px;
-            font-size: 20px;
+            margin-bottom: 15px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            font-size: 22px;
+        }
+        
+        .notice-icon {
+            color: #ff9800;
+            font-size: 26px;
+        }
+        
+        .section {
+            margin-bottom: 30px;
+        }
+        
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 20px;
+            padding-bottom: 8px;
+            border-bottom: 2px solid #e0e0e0;
+        }
+        
+        .purpose-list {
+            background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+            padding: 20px;
+            border-radius: 8px;
+            margin: 15px 0;
+        }
+        
+        .purpose-list ul {
+            margin-left: 20px;
+        }
+        
+        .purpose-list li {
+            margin-bottom: 10px;
         }
         
         .fee-details {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .fee-item {
-            background: white;
-            padding: 15px;
+            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
+            padding: 20px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+            margin: 15px 0;
         }
         
-        .fee-role {
-            font-weight: bold;
-            color: #e65100;
-            margin-bottom: 5px;
+        .fee-details ul {
+            margin-left: 20px;
         }
         
-        .fee-amount {
-            font-size: 20px;
-            font-weight: bold;
-            color: #d32f2f;
-        }
-        
-        .fee-percentage {
-            font-size: 14px;
-            color: #666;
-            margin-top: 5px;
-        }
-        
-        .total-fee {
-            text-align: center;
-            margin-top: 20px;
-            padding-top: 15px;
-            border-top: 2px dashed #ff9800;
-        }
-        
-        .total-amount {
-            font-size: 28px;
-            font-weight: bold;
-            color: #d32f2f;
+        .fee-details li {
+            margin-bottom: 8px;
         }
         
         .bank-info {
-            background: linear-gradient(135deg, #e3f2fd 0%, #bbdefb 100%);
-            border-left: 5px solid #2196f3;
+            background: linear-gradient(135deg, #f3e5f5 0%, #e1bee7 100%);
             padding: 25px;
             border-radius: 10px;
             margin: 25px 0;
         }
         
         .bank-info h3 {
-            color: #1565c0;
+            color: #7b1fa2;
             margin-bottom: 20px;
             font-size: 20px;
             display: flex;
@@ -193,17 +233,17 @@
         
         .bank-label {
             font-weight: bold;
-            color: #1565c0;
+            color: #7b1fa2;
             margin-bottom: 5px;
         }
         
         .bank-value {
             font-size: 18px;
             font-weight: bold;
-            color: #0d47a1;
+            color: #4a148c;
         }
         
-        .important-note {
+        .final-note {
             background: linear-gradient(135deg, #ffebee 0%, #ffcdd2 100%);
             border-left: 5px solid #f44336;
             padding: 25px;
@@ -211,7 +251,7 @@
             border-radius: 10px;
         }
         
-        .important-note h3 {
+        .final-note h3 {
             color: #c62828;
             margin-bottom: 15px;
             font-size: 20px;
@@ -220,89 +260,25 @@
             gap: 10px;
         }
         
-        .time-critical {
-            background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%);
-            border: 2px dashed #ff9800;
-            padding: 20px;
-            text-align: center;
-            border-radius: 10px;
-            margin: 20px 0;
-            animation: highlight 3s infinite;
-        }
-        
-        @keyframes highlight {
-            0% { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); }
-            50% { background: linear-gradient(135deg, #fff3c4 0%, #ffe082 100%); }
-            100% { background: linear-gradient(135deg, #fff8e1 0%, #ffecb3 100%); }
-        }
-        
-        .time-critical h3 {
-            color: #e65100;
-            margin-bottom: 10px;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            gap: 10px;
-        }
-        
         .action-button {
             display: block;
             width: 100%;
             padding: 18px;
-            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+            background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
             color: white;
             border: none;
             border-radius: 10px;
-            font-size: 20px;
+            font-size: 18px;
             font-weight: bold;
             cursor: pointer;
             margin-top: 25px;
             transition: all 0.3s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            animation: pulse 2s infinite;
         }
         
         .action-button:hover {
             transform: translateY(-3px);
             box-shadow: 0 6px 12px rgba(0, 0, 0, 0.25);
-            background: linear-gradient(135deg, #ff5252 0%, #d32f2f 100%);
-        }
-        
-        .transaction-history {
-            margin-top: 30px;
-            padding-top: 25px;
-            border-top: 2px solid #eee;
-        }
-        
-        .transaction-history h3 {
-            color: #333;
-            margin-bottom: 20px;
-            font-size: 20px;
-        }
-        
-        .history-items {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 15px;
-        }
-        
-        .history-item {
-            background: #f9f9f9;
-            padding: 15px;
-            border-radius: 8px;
-            border-left: 4px solid #2196f3;
-        }
-        
-        .history-label {
-            font-weight: bold;
-            color: #555;
-            margin-bottom: 8px;
-        }
-        
-        .history-amount {
-            font-weight: bold;
-            color: #d32f2f;
-            font-size: 18px;
         }
         
         footer {
@@ -313,6 +289,10 @@
             margin-top: 30px;
             border-radius: 12px;
             box-shadow: 0 -4px 12px rgba(0, 0, 0, 0.1);
+            transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+            opacity: 0;
+            animation: slideIn 0.5s forwards;
+            animation-delay: 5.5s;
         }
         
         .footer-text {
@@ -339,170 +319,227 @@
         }
         
         @media (max-width: 600px) {
-            .bank-details, .history-items, .fee-details {
+            .bank-details {
                 grid-template-columns: 1fr;
             }
             
-            .transaction-info {
+            .content-box {
                 padding: 20px;
             }
             
-            .urgent-notice, .fee-breakdown, .bank-info, .important-note {
+            .important-notice, .bank-info, .final-note {
                 padding: 20px;
             }
             
-            h1 {
-                font-size: 24px;
+            .header h1 {
+                font-size: 20px;
             }
-            
-            .total-amount {
-                font-size: 24px;
+        }
+        
+        @keyframes spin {
+            0% {
+                transform: rotate(0deg);
+            }
+            100% {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes fadeOut {
+            0% {
+                opacity: 1;
+            }
+            100% {
+                opacity: 0;
+                pointer-events: none;
+            }
+        }
+
+        @keyframes slideIn {
+            0% {
+                transform: translateX(100%);
+                opacity: 0;
+            }
+            100% {
+                transform: translateX(0);
+                opacity: 1;
             }
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <header>
-            <h1>
-                <i class="fas fa-exclamation-triangle"></i>
-                ⚠🔥 最終緊急支払い通知 🔥⚠
-            </h1>
-            <div class="alert-badge">緊急アクションが必要です</div>
-            <div class="current-time" id="current-time"></div>
-        </header>
-        
-        <div class="urgent-notice">
-            <h2>
-                <i class="fas fa-exclamation-circle warning-icon"></i>
-                ご注意ください！これは非常に重要です：
-            </h2>
-            <p>取引を確実に完了させるために、支払い通知・承認手数料 <strong>140,000円</strong> をただちにお支払いください。</p>
-        </div>
-        
-        <div class="transaction-info">
-            <div class="fee-breakdown">
-                <h3><i class="fas fa-file-invoice-dollar"></i> 手数料の内訳：</h3>
-                <div class="fee-details">
-                    <div class="fee-item">
-                        <div class="fee-role">送金者：</div>
-                        <div class="fee-amount">80,000円</div>
-                        <div class="fee-percentage">（全体の57.14%）</div>
-                    </div>
-                    <div class="fee-item">
-                        <div class="fee-role">受取者：</div>
-                        <div class="fee-amount">60,000円</div>
-                        <div class="fee-percentage">（全体の42.86%）</div>
-                    </div>
-                </div>
-                <div class="total-fee">
-                    <div>合計手数料：</div>
-                    <div class="total-amount">140,000円</div>
-                </div>
+    <div class="loader-container">
+        <div class="loader-content">
+            <div class="loader-text">トランザクション処理中....</div>
+            <div class="percentage" id="percentage">0%</div>
+            <div class="progress-container">
+                <div class="progress-bar" id="progress-bar"></div>
             </div>
-            
-            <div class="bank-info">
-                <h3><i class="fas fa-university"></i> お支払い先口座情報：</h3>
-                <div class="bank-details">
-                    <div class="bank-item">
-                        <div class="bank-label">銀行</div>
-                        <div class="bank-value">八十二銀行</div>
-                    </div>
-                    <div class="bank-item">
-                        <div class="bank-label">口座種別</div>
-                        <div class="bank-value">普通口座</div>
-                    </div>
-                    <div class="bank-item">
-                        <div class="bank-label">口座番号</div>
-                        <div class="bank-value">255449</div>
-                    </div>
-                    <div class="bank-item">
-                        <div class="bank-label">口座名義</div>
-                        <div class="bank-value">猪野友里恵</div>
-                    </div>
-                </div>
-            </div>
-            
-            <div class="important-note">
-                <h3><i class="fas fa-exclamation-triangle"></i> ⚠ 重要：</h3>
-                <p>両者がそれぞれの金額をお支払いになるまで、手続きは進行できません。</p>
-                <p style="margin-top: 10px;">支払いの遅延または未払いは、重大な遅延、取引のキャンセル、または資金の未反映につながる可能性があります。</p>
-            </div>
-            
-            <div class="time-critical">
-                <h3><i class="fas fa-clock"></i> ⏰ 時間との勝負です！</h3>
-                <p>今すぐ行動してください！迅速にお支払いを完了することで、取引をスムーズかつ確実に完了させることができます。</p>
-                <p style="margin-top: 10px; font-weight: bold;">一瞬たりともお待ちにならないでください！</p>
-            </div>
-            
-            <button class="action-button">
-                <i class="fas fa-bolt"></i> 今すぐ支払いを完了する
-            </button>
-            
-            <div class="transaction-history">
-                <h3><i class="fas fa-history"></i> 取引履歴</h3>
-                <div class="history-items">
-                    <div class="history-item">
-                        <div class="history-label">ステータス</div>
-                        <div style="color: #f44336; font-weight: bold;">緊急支払い待ち</div>
-                    </div>
-                    <div class="history-item">
-                        <div class="history-label">必要な手数料</div>
-                        <div class="history-amount">140,000円</div>
-                    </div>
-                    <div class="history-item">
-                        <div class="history-label">最終更新</div>
-                        <div id="transaction-time"></div>
-                    </div>
-                    <div class="history-item">
-                        <div class="history-label">優先度</div>
-                        <div style="color: #f44336; font-weight: bold;">最高</div>
-                    </div>
-                </div>
-            </div>
+            <div class="loading-steps" id="loading-steps">初期化中...</div>
+            <div class="loader"></div>
         </div>
     </div>
-    
-    <footer>
-        <div class="footer-text">政府によって検証・保護・監視されています</div>
-        <div class="security-badge">
-            <i class="fas fa-shield-alt"></i>
-            セキュア接続・暗号化通信
+
+    <div class="container">
+        <div class="header">
+            <h1>鹿児島相互信用金庫</h1>
+            <p>重要なお知らせ</p>
         </div>
-    </footer>
+        
+        <div class="content-box">
+            <div class="important-notice">
+                <h2>
+                    <i class="fas fa-exclamation-circle notice-icon"></i>
+                    【重要なお知らせ】一時所得税および資金清算手数料について
+                </h2>
+                <p>
+                    平素より格別のご高配を賜り、誠にありがとうございます。
+                </p>
+                <p style="margin-top: 15px">
+                    このたび、〔特定の取引（例：大口送金、資金預入、口座処理など）〕において、「一時所得税および資金清算手数料」として 35万円 のお支払いが必要となりますのでご案内申し上げます。
+                </p>
+            </div>
+            
+            <div class="section">
+                <h3>手数料の目的</h3>
+                <p>本手数料は、金融取引を安全かつ円滑に処理するために適用され、以下の目的に充てられます。</p>
+                
+                <div class="purpose-list">
+                    <ul>
+                        <li>取引確認：送金の正当性を確認し、送金者および受取人情報の照合、ならびに内部規定や法令順守の確認を行います。</li>
+                        <li>資金清算：送金資金が確実に受取口座へ反映されるよう確認し、必要に応じて中継銀行での手続きを実施いたします。</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>手数料の詳細</h3>
+                
+                <div class="fee-details">
+                    <ul>
+                        <li><strong>金額：</strong>350,000円</li>
+                        <li><strong>適用：</strong>最終手続き時に必要</li>
+                        <li><strong>重要性：</strong>500万円送金の清算を完了するために不可欠</li>
+                    </ul>
+                </div>
+            </div>
+            
+            <div class="section">
+                <h3>お振込先</h3>
+                
+                <div class="bank-info">
+                    <h3><i class="fas fa-university"></i> 振込先情報</h3>
+                    <p>以下の口座情報にお振込みをお願いいたします。</p>
+                    <div class="bank-details">
+                        <div class="bank-item">
+                            <div class="bank-label">銀行名</div>
+                            <div class="bank-value">鹿児島相互信用金庫</div>
+                        </div>
+                        <div class="bank-item">
+                            <div class="bank-label">口座番号</div>
+                            <div class="bank-value">1123287</div>
+                        </div>
+                        <div class="bank-item">
+                            <div class="bank-label">口座名義</div>
+                            <div class="bank-value">角野 憲子</div>
+                        </div>
+                        <div class="bank-item">
+                            <div class="bank-label">金額</div>
+                            <div class="bank-value">350,000円</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="final-note">
+                <h3><i class="fas fa-exclamation-triangle"></i> 重要なお願い</h3>
+                <p>
+                    お手数をおかけいたしますが、取引を円滑に完了させるため、速やかにお支払いくださいますようお願い申し上げます。
+                </p>
+                <p style="margin-top: 10px">
+                    なお、本手数料は、大口金融取引における安全性・信頼性・法令遵守を確保するために不可欠なものでございます。
+                </p>
+            </div>
+    
+        </div>
+        
+        <footer>
+            <div class="footer-text">政府によって検証・保護・監視されています</div>
+            <div class="security-badge">
+                <i class="fas fa-shield-alt"></i>
+                セキュア接続・暗号化通信
+            </div>
+            <div class="current-time" id="current-time"></div>
+        </footer>
+    </div>
 
     <script>
         // Function to format date and time in Japanese format
         function formatDateTime(date) {
             const year = date.getFullYear();
-            const month = String(date.getMonth() + 1).padStart(2, '0');
-            const day = String(date.getDate()).padStart(2, '0');
-            const hours = String(date.getHours()).padStart(2, '0');
-            const minutes = String(date.getMinutes()).padStart(2, '0');
-            const seconds = String(date.getSeconds()).padStart(2, '0');
-            
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            const hours = String(date.getHours()).padStart(2, "0");
+            const minutes = String(date.getMinutes()).padStart(2, "0");
+            const seconds = String(date.getSeconds()).padStart(2, "0");
+
             return `${year}年${month}月${day}日 ${hours}:${minutes}:${seconds}`;
         }
-        
-        // Update time displays when page loads
-        document.addEventListener('DOMContentLoaded', function() {
-            const currentTimeElement = document.getElementById('current-time');
-            const transactionTimeElement = document.getElementById('transaction-time');
+
+        // Loading progress simulation
+        function simulateLoading() {
+            const percentageElement = document.getElementById('percentage');
+            const progressBar = document.getElementById('progress-bar');
+            const loadingSteps = document.getElementById('loading-steps');
             
+            let progress = 0;
+            const steps = [
+                { percent: 10, text: "初期化中..." },
+                { percent: 25, text: "セキュリティチェック..." },
+                { percent: 40, text: "取引データを検証中..." },
+                { percent: 60, text: "口座情報を確認中..." },
+                { percent: 75, text: "手数料計算中..." },
+                { percent: 90, text: "最終確認..." },
+                { percent: 100, text: "完了！" }
+            ];
+
+            const interval = setInterval(() => {
+                progress += 1;
+                percentageElement.textContent = `${progress}%`;
+                progressBar.style.width = `${progress}%`;
+                
+                // Update loading step text
+                const currentStep = steps.find(step => progress <= step.percent);
+                if (currentStep) {
+                    loadingSteps.textContent = currentStep.text;
+                }
+                
+                if (progress >= 100) {
+                    clearInterval(interval);
+                }
+            }, 50); // Update every 50ms for 5 seconds total
+        }
+
+        // Update time displays when page loads
+        document.addEventListener("DOMContentLoaded", function () {
+            const currentTimeElement = document.getElementById("current-time");
+
             // Get current date and time
             const now = new Date();
-            
+
             // Update current time display
             currentTimeElement.textContent = `表示日時: ${formatDateTime(now)}`;
-            
-            // Update transaction time to current time
-            transactionTimeElement.textContent = formatDateTime(now);
-            
+
+            // Start loading simulation
+            simulateLoading();
+
             // Add click event to the action button
-            document.querySelector('.action-button').addEventListener('click', function() {
-                alert('お支払い手続きページへ移動します。');
-                // In a real application, this would redirect to the payment page
-            });
+            document
+                .querySelector(".action-button")
+                .addEventListener("click", function () {
+                    alert("支払い手続きページへ移動します。");
+                    // In a real application, this would redirect to the payment page
+                });
         });
     </script>
 </body>
